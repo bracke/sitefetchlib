@@ -1,0 +1,7 @@
+SPDX-License-Identifier: MIT OR Apache-2.0 WITH LLVM-exception
+
+Copyright (c) 2026 Bent Bracke and contributors
+
+This crate is licensed under either the MIT License or the Apache License 2.0
+with LLVM exception, at your option. See the Alire manifest license expression
+for the release contract.

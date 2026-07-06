@@ -1,0 +1,24 @@
+name = "sitefetchlib_public_api_smoke"
+description = "Downstream compile smoke test for the public sitefetchlib API"
+version = "0.1.0-dev"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+long-description = "Small downstream-style smoke crate that depends on sitefetchlib and imports the stable Sitefetch records plus Sitefetch.Crawler entry points to catch accidental public API drift toward CLI or testing-only packages."
+
+# Fill this with the canonical project URL when one exists.
+website = ""
+tags = ["test", "smoke", "public-api", "library"]
+
+executables = ["sitefetchlib_public_api_smoke"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+sitefetchlib = "*"
+
+[[pins]]
+sitefetchlib = { path = ".." }

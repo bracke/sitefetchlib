@@ -1,0 +1,24 @@
+name = "sitefetchlib_url_content_helpers_example"
+description = "Checked URL and content helper example for the public sitefetchlib API"
+version = "0.1.0-dev"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+long-description = "Small checked example crate showing offline use of Sitefetch.URLs and Sitefetch.Content helper packages. It resolves, canonicalizes, classifies, and asserts helper results without network or filesystem mirror work."
+
+# Fill this with the canonical project URL when one exists.
+website = ""
+tags = ["example", "public-api", "library", "urls", "content"]
+
+executables = ["url_content_helpers"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+sitefetchlib = "*"
+
+[[pins]]
+sitefetchlib = { path = "../.." }

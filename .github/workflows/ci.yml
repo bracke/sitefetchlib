@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux-release-check:
+    name: Linux release checklist
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out sitefetchlib
+        uses: actions/checkout@v4
+        with:
+          path: sitefetchlib
+      - name: Check out HttpClient sibling
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/HttpClient
+          path: HttpClient
+      - name: Check out regexp sibling
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/regexp
+          path: regexp
+      - name: Check out zlib sibling
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/zlib
+          path: zlib
+      - name: Check out project_tools sibling
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/project_tools
+          path: project_tools
+      - name: Set up Alire
+        uses: alire-project/setup-alire@v5
+      - name: Install Ada toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gnat gprbuild gnatprove libssl-dev python3 || sudo apt-get install -y gnat gprbuild libssl-dev python3
+          sudo apt-get install -y libaunit-dev || sudo apt-get install -y libaunit22-dev || sudo apt-get install -y libaunit24-dev
+      - name: Build release checker
+        working-directory: sitefetchlib/check_sitefetchlib
+        run: alr build
+      - name: Run release checker
+        working-directory: sitefetchlib/check_sitefetchlib
+        run: ./bin/check_sitefetchlib

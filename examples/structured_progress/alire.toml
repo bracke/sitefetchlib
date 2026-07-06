@@ -1,0 +1,24 @@
+name = "sitefetchlib_structured_progress_example"
+description = "Checked structured progress example for the public sitefetchlib API"
+version = "0.1.0-dev"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+long-description = "Small checked example crate showing Fetch_Website_With_Structured_Progress. It compiles the structured progress callback and only performs network/filesystem mirror work when SITEFETCHLIB_RUN_EXAMPLE=1 is set."
+
+# Fill this with the canonical project URL when one exists.
+website = ""
+tags = ["example", "public-api", "library", "diagnostics"]
+
+executables = ["structured_progress"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+sitefetchlib = "*"
+
+[[pins]]
+sitefetchlib = { path = "../.." }

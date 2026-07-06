@@ -1,0 +1,34 @@
+name = "sitefetchlib"
+description = "Reusable Ada website mirroring library"
+version = "0.1.0"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+long-description = "sitefetchlib is the reusable library crate behind sitefetch. It exposes the stable Sitefetch package for crawling, rewriting, direct downloads, robots policy, retry/cache behavior, progress diagnostics, and fetch statistics."
+
+# Fill this with the canonical project URL when one exists.
+website = ""
+tags = ["website", "mirror", "crawler", "http", "library"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+httpclient = "*"
+
+[[depends-on]]
+regexp = "*"
+
+[[depends-on]]
+zlib = "*"
+
+[[pins]]
+httpclient = { path = "../HttpClient" }
+
+[[pins]]
+regexp = { path = "../regexp" }
+
+[[pins]]
+zlib = { path = "../zlib" }

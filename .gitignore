@@ -1,0 +1,21 @@
+# Generated Alire workspace state
+alire/
+**/alire/
+
+# Generated Alire/GPR configuration
+config/
+**/config/
+
+# Build outputs
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Library outputs
+lib/
+**/lib/
+
+# Local scratch binaries from manual experiments
+/test_ada_rename
+/test_ada_rename.*

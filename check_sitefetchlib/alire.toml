@@ -1,0 +1,24 @@
+name = "check_sitefetchlib"
+description = "Ada release and documentation contract check for sitefetchlib"
+version = "0.1.0-dev"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+long-description = "Small Ada utility that verifies sitefetchlib API support-level documentation remains aligned across README, docs/API.md, and package specs."
+
+# Fill this with the canonical project URL when one exists.
+website = ""
+tags = ["docs", "check", "public-api"]
+
+executables = ["check_sitefetchlib"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+project_tools = "*"
+
+[[pins]]
+project_tools = { path = "../../project_tools" }

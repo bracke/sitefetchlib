@@ -1,0 +1,24 @@
+name = "sitefetchlib_basic_mirror_example"
+description = "Checked basic mirror example for the public sitefetchlib API"
+version = "0.1.0-dev"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+long-description = "Small checked example crate showing README-style use of Sitefetch.Crawler. It compiles the Fetch_Website call but only performs network/filesystem mirror work when SITEFETCHLIB_RUN_EXAMPLE=1 is set."
+
+# Fill this with the canonical project URL when one exists.
+website = ""
+tags = ["example", "public-api", "library"]
+
+executables = ["basic_mirror"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+sitefetchlib = "*"
+
+[[pins]]
+sitefetchlib = { path = "../.." }

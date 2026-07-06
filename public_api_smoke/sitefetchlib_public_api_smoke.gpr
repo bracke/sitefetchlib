@@ -1,0 +1,23 @@
+with "../sitefetchlib.gpr";
+
+project Sitefetchlib_Public_API_Smoke is
+
+   for Source_Dirs use ("src/");
+   for Object_Dir use "obj";
+   for Create_Missing_Dirs use "True";
+   for Exec_Dir use "bin";
+   for Main use ("sitefetchlib_public_api_smoke.adb");
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-gnat2022", "-gnatyM120", "-gnatX", "-gnatwU");
+   end Compiler;
+
+   package Binder is
+      for Switches ("Ada") use ("-Es");
+   end Binder;
+
+   package Linker is
+      for Default_Switches ("Ada") use ("-lssl", "-lcrypto");
+   end Linker;
+
+end Sitefetchlib_Public_API_Smoke;

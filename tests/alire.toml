@@ -1,0 +1,33 @@
+name = "sitefetchlib_tests"
+description = "Library behavior test suite for sitefetchlib"
+version = "0.1.0-dev"
+
+authors = ["Bent Bracke"]
+maintainers = ["Bent Bracke <bent@bracke.dk>"]
+maintainers-logins = ["bracke"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+long-description = "AUnit tests for sitefetchlib library behavior, including URL/domain helpers, extraction, rewriting, content classification, injected fetch fixtures, parallel crawling, direct downloads, failures, and HTTP client configuration."
+
+# Fill this with the canonical project URL when one exists.
+website = ""
+tags = ["test", "suite", "library", "aunit"]
+
+executables = ["sitefetchlib_tests"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+
+[[depends-on]]
+sitefetchlib = "*"
+
+[[pins]]
+sitefetchlib = { path = ".." }
+
+[[depends-on]]
+aunit = "^26.0.0"
+
+[[depends-on]]
+project_tools = "*"
+
+[[pins]]
+project_tools = { path = "../../project_tools" }
