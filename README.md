@@ -237,7 +237,7 @@ checking crawl scope, deriving mirror local paths, and classifying parse-vs-down
 
 Local path dependencies are pinned in `alire.toml` for this sibling checkout:
 
-- `httpclient` at `../HttpClient`
+- `httpclient` at `../httpclient`
 - `regexp` at `../regexp`
 - `zlib` at `../zlib`
 

@@ -9,7 +9,7 @@ licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
 long-description = "sitefetchlib is the reusable library crate behind sitefetch. It exposes the stable Sitefetch package for crawling, rewriting, direct downloads, robots policy, retry/cache behavior, progress diagnostics, and fetch statistics."
 
 # Fill this with the canonical project URL when one exists.
-website = ""
+website = "https://github.com/bracke/sitefetchlib"
 tags = ["website", "mirror", "crawler", "http", "library"]
 
 [[depends-on]]
@@ -25,7 +25,7 @@ regexp = "*"
 zlib = "*"
 
 [[pins]]
-httpclient = { path = "../HttpClient" }
+httpclient = { path = "../httpclient" }
 
 [[pins]]
 regexp = { path = "../regexp" }
