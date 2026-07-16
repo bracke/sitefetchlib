@@ -51,6 +51,11 @@ jobs:
           echo "$HOME/.alire/bin" >> "$GITHUB_PATH"
       - name: Install OpenSSL headers
         run: sudo apt-get update && sudo apt-get install -y libssl-dev
+      - name: Build sitefetchlib
+        # Generates the gitignored Alire configs for the path-pinned siblings
+        # (httpclient, zlib, cryptolib, regexp); gnatprove needs zlib's config/zlib_config.gpr.
+        working-directory: sitefetchlib
+        run: alr --non-interactive build
       - name: Build release checker
         working-directory: sitefetchlib/check_sitefetchlib
         run: alr --non-interactive build
