@@ -1,4 +1,4 @@
-with "../HttpClient/httpclient.gpr";
+with "../httpclient/httpclient.gpr";
 with "../regexp/regexp.gpr";
 with "../zlib/zlib.gpr";
 
