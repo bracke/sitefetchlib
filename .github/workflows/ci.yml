@@ -14,11 +14,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: sitefetchlib
-      - name: Check out HttpClient sibling
+      - name: Check out httpclient sibling
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/HttpClient
-          path: HttpClient
+          repository: ${{ github.repository_owner }}/httpclient
+          path: httpclient
       - name: Check out regexp sibling
         uses: actions/checkout@v4
         with:
@@ -29,6 +29,11 @@ jobs:
         with:
           repository: ${{ github.repository_owner }}/zlib
           path: zlib
+      - name: Check out cryptolib sibling
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/cryptolib
+          path: cryptolib
       - name: Check out project_tools sibling
         uses: actions/checkout@v4
         with:
@@ -36,14 +41,23 @@ jobs:
           path: project_tools
       - name: Set up Alire
         uses: alire-project/setup-alire@v5
-      - name: Install Ada toolchain
+        with:
+          toolchain: gnat_native=15.2.1 gprbuild
+      - name: Install GNATprove
+        # The release checker runs "alr exec -- gnatprove". gnatprove is a regular Alire
+        # crate, not a toolchain component, and apt has no reliable package.
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gnat gprbuild gnatprove libssl-dev python3 || sudo apt-get install -y gnat gprbuild libssl-dev python3
-          sudo apt-get install -y libaunit-dev || sudo apt-get install -y libaunit22-dev || sudo apt-get install -y libaunit24-dev
+          alr install gnatprove
+          echo "$HOME/.alire/bin" >> "$GITHUB_PATH"
+      - name: Install OpenSSL headers
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev
       - name: Build release checker
         working-directory: sitefetchlib/check_sitefetchlib
-        run: alr build
+        run: alr --non-interactive build
       - name: Run release checker
         working-directory: sitefetchlib/check_sitefetchlib
+        # gnatprove resolves httpclient.gpr's bare "with zlib" (and its cryptolib) through
+        # GPR_PROJECT_PATH; alr exec does not add the path-pinned siblings itself.
+        env:
+          GPR_PROJECT_PATH: ${{ github.workspace }}/httpclient:${{ github.workspace }}/zlib:${{ github.workspace }}/cryptolib:${{ github.workspace }}/regexp
         run: ./bin/check_sitefetchlib
