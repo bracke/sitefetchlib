@@ -17,7 +17,8 @@ procedure Check_Sitefetchlib is
    use GNAT.OS_Lib;
 
    --  --level=4 is the full proof; -j0 parallelises and --timeout caps each VC
-   --  so the check terminates instead of hitting the 6-hour CI job limit.
+   --  so the check terminates instead of hitting the 6-hour CI job limit. 20s is
+   --  enough for the provable VCs; unprovable ones no longer burn a full minute.
    Gnatprove_Check_Args : constant Argument_List :=
      (1 => new String'("exec"),
       2 => new String'("--"),
@@ -26,7 +27,7 @@ procedure Check_Sitefetchlib is
       5 => new String'("sitefetchlib.gpr"),
       6 => new String'("--level=4"),
       7 => new String'("-j0"),
-      8 => new String'("--timeout=60"));
+      8 => new String'("--timeout=20"));
 
    GNAT_Version_Check_Args : constant Argument_List :=
      (1 => new String'("exec"),
