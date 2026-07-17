@@ -16,13 +16,17 @@ procedure Check_Sitefetchlib is
    use Ada.Text_IO;
    use GNAT.OS_Lib;
 
+   --  --level=4 is the full proof; -j0 parallelises and --timeout caps each VC
+   --  so the check terminates instead of hitting the 6-hour CI job limit.
    Gnatprove_Check_Args : constant Argument_List :=
      (1 => new String'("exec"),
       2 => new String'("--"),
       3 => new String'("gnatprove"),
       4 => new String'("-P"),
       5 => new String'("sitefetchlib.gpr"),
-      6 => new String'("--level=4"));
+      6 => new String'("--level=4"),
+      7 => new String'("-j0"),
+      8 => new String'("--timeout=60"));
 
    GNAT_Version_Check_Args : constant Argument_List :=
      (1 => new String'("exec"),
