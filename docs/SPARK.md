@@ -28,7 +28,7 @@ Those routines call `Sitefetch.Domain_Of` and `Http_Client.URI` helpers to parse
 Every release must run:
 
 ```sh
-alr exec -- gnatprove -P sitefetchlib.gpr --level=4
+alr exec -- gnatprove -P sitefetchlib.gpr -u sitefetch-domains.adb --level=4
 ```
 
 Run GNATprove through Alire only. The active manifests pin

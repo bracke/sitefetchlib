@@ -74,7 +74,7 @@ pinned toolchain is selected:
 ```sh
 alr exec -- gnatls --version
 alr exec -- gprbuild -P sitefetchlib.gpr
-alr exec -- gnatprove -P sitefetchlib.gpr --level=4
+alr exec -- gnatprove -P sitefetchlib.gpr -u sitefetch-domains.adb --level=4
 ```
 
 The version command must report `GNATLS 15.x`. The `check_sitefetchlib` release
@@ -324,7 +324,7 @@ Run the project-closure SPARK check through Alire so GNATprove can resolve the s
 `regexp`, and `zlib` projects:
 
 ```sh
-alr exec -- gnatprove -P sitefetchlib.gpr --level=4
+alr exec -- gnatprove -P sitefetchlib.gpr -u sitefetch-domains.adb --level=4
 ```
 
 This is the GNATprove release check required before a sitefetchlib release. Most sitefetchlib crawler implementation units are intentionally outside SPARK mode because they use filesystem, HTTP, callbacks, and runtime I/O. The level-2 check exercises flow analysis and proof for SPARK-enabled units; URL parsing wrappers remain outside SPARK where they depend on non-SPARK HTTP/URI helpers. See `docs/SPARK.md` for the current coverage boundary.
