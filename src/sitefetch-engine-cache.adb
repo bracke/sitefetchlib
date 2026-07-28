@@ -2,7 +2,6 @@ with Ada.Characters.Handling;
 with Ada.Directories;
 with Ada.Streams.Stream_IO;
 with Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 with Interfaces;
 
@@ -15,7 +14,6 @@ with Http_Client.Errors;
 with Sitefetch.URLs;
 
 package body Sitefetch.Engine.Cache is
-   use Ada.Strings.Unbounded;
    use Sitefetch.URLs;
    use type Ada.Directories.File_Kind;
    use type Ada.Directories.File_Size;
@@ -134,7 +132,6 @@ package body Sitefetch.Engine.Cache is
    function File_Content_Hash
      (Path_Text : String;
       Algorithm : Cache_Hash_Algorithm := Cache_Hash_FNV1a_64) return String is
-      use type Ada.Streams.Stream_Element_Offset;
       use type Interfaces.Unsigned_64;
 
       File   : Ada.Streams.Stream_IO.File_Type;

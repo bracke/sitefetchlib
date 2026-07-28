@@ -1,11 +1,6 @@
 with Ada.Strings.Fixed;
-with Ada.Strings.Unbounded;
 
-with Http_Client.Clients;
 with Http_Client.Decompression;
-with Http_Client.Errors;
-with Http_Client.Retry;
-with Http_Client.Responses;
 with Http_Client.URI;
 
 with Sitefetch.Content;

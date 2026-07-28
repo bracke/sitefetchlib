@@ -2,12 +2,10 @@ with Ada.Calendar;
 with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Strings.Fixed;
 with Ada.Strings.Hash;
-with Ada.Strings.Unbounded;
 
 with Sitefetch.URLs;
 
 package body Sitefetch.Engine.Robots is
-   use Ada.Strings.Unbounded;
    use Sitefetch.URLs;
    use type Ada.Calendar.Time;
 
@@ -114,7 +112,6 @@ package body Sitefetch.Engine.Robots is
          Next_Start_By_Origin.Clear;
       end Clear;
    end Crawl_Delay_Scheduler;
-
 
    procedure Lookup_Cached_Robots
      (Origin : String;

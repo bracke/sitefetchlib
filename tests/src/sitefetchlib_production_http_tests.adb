@@ -11,7 +11,6 @@ with GNAT.Sockets;
 with AUnit;
 with AUnit.Assertions;
 with AUnit.Simple_Test_Cases;
-with AUnit.Test_Suites;
 
 with Project_Tools.Files;
 
@@ -101,7 +100,6 @@ package body Sitefetchlib_Production_HTTP_Tests is
       return ".";
    end Containing_Test_Path;
 
-
    function Has_Generated_Atomic_Artifact
      (Directory : String; Base_Name : String) return Boolean
    is
@@ -115,9 +113,9 @@ package body Sitefetchlib_Production_HTTP_Tests is
 
       Ada.Directories.Start_Search
         (Search, Directory, Base_Name & ".sitefetch_*",
-         (Ada.Directories.Ordinary_File => True,
+         [Ada.Directories.Ordinary_File => True,
           Ada.Directories.Directory => True,
-          Ada.Directories.Special_File => True));
+          Ada.Directories.Special_File => True]);
       while Ada.Directories.More_Entries (Search) loop
          Ada.Directories.Get_Next_Entry (Search, Item);
          Name := To_Unbounded_String (Ada.Directories.Simple_Name (Item));
@@ -180,13 +178,13 @@ package body Sitefetchlib_Production_HTTP_Tests is
       procedure Capture (Event : Sitefetch.Progress_Event);
       function Count (Event : Sitefetch.Progress_Event) return Natural;
    private
-      Counts : Progress_Event_Counts := (others => 0);
+      Counts : Progress_Event_Counts := [others => 0];
    end Parallel_Progress;
 
    protected body Parallel_Progress is
       procedure Reset is
       begin
-         Counts := (others => 0);
+         Counts := [others => 0];
       end Reset;
 
       procedure Capture (Event : Sitefetch.Progress_Event) is
@@ -282,7 +280,6 @@ package body Sitefetchlib_Production_HTTP_Tests is
    begin
       return AUnit.Format ("Production HTTP fixture crawl");
    end Name;
-
 
    Fixture_Binary_Body   : constant String := "BINARY-NOEXT";
    Fixture_Redirect_Body : constant String := "REDIRECT-BINARY";
@@ -897,7 +894,6 @@ package body Sitefetchlib_Production_HTTP_Tests is
          end if;
       end Respond_If_Range_Changed;
 
-
       procedure Handle (Socket : GNAT.Sockets.Socket_Type) is
          Request : constant String := Request_Text (Socket);
          Method  : constant String := Request_Method (Request);
@@ -1170,7 +1166,6 @@ package body Sitefetchlib_Production_HTTP_Tests is
          end if;
       end Handle;
    begin
-      GNAT.Sockets.Initialize;
       GNAT.Sockets.Create_Socket (Server);
       Address.Addr := GNAT.Sockets.Inet_Addr ("127.0.0.1");
       Address.Port := 0;
@@ -1234,6 +1229,8 @@ package body Sitefetchlib_Production_HTTP_Tests is
       Partial_Strong_Target : constant String := "test-output-production-partial-strong";
       Partial_Weak_Target : constant String := "test-output-production-partial-weak";
       Statistics : Sitefetch.Fetch_Statistics;
+      --  Separate sink for crawls whose statistics the test does not inspect.
+      Ignored_Statistics : Sitefetch.Fetch_Statistics;
       Limits     : Sitefetch.Fetch_Options := Sitefetch.Default_Fetch_Options;
       Control    : aliased Fixture_Control;
       Peer_Control : aliased Fixture_Control;
@@ -1573,7 +1570,7 @@ package body Sitefetchlib_Production_HTTP_Tests is
       Limits.Cache.Mode := Sitefetch.Cache_Revalidate;
       Assert
         (Sitefetch.Crawler.Fetch_Website_With_Structured_Progress
-           (To_String (Base_URL) & "/cache-root.html", Structured_Target, Statistics,
+           (To_String (Base_URL) & "/cache-root.html", Structured_Target, Ignored_Statistics,
             Record_Structured_Progress'Access, Limits),
          "structured progress fixture crawl succeeds");
       Assert
@@ -2128,7 +2125,6 @@ package body Sitefetchlib_Production_HTTP_Tests is
       Assert
         (Parallel_Progress.Count (Sitefetch.Progress_Cache_Rejected) > 0,
          "mismatched Vary request value reports cache rejection reason");
-      Limits.Cache.Verify_Local_Content := True;
       Delete_Tree_If_Present (Cache_Vary_Target);
 
       Limits := Sitefetch.Default_Fetch_Options;
@@ -2227,7 +2223,7 @@ package body Sitefetchlib_Production_HTTP_Tests is
       Limits.Cache.Mode := Sitefetch.Cache_Revalidate;
       Assert
         (Sitefetch.Crawler.Fetch_Website
-           (To_String (Base_URL) & "/cache.bin", Cache_Binary_Target, Statistics, null, Limits),
+           (To_String (Base_URL) & "/cache.bin", Cache_Binary_Target, Ignored_Statistics, null, Limits),
          "production fixture writes cache metadata for streamed downloads");
       Assert
         (Read_File (Cache_Binary_Target & "/cache.bin") = Fixture_Cache_Body,
@@ -2311,7 +2307,7 @@ package body Sitefetchlib_Production_HTTP_Tests is
       Limits.Cache.Mode := Sitefetch.Cache_Revalidate;
       Assert
         (Sitefetch.Crawler.Fetch_Website
-           (To_String (Base_URL) & "/cache.bin", Cache_Binary_Target, Statistics, null, Limits),
+           (To_String (Base_URL) & "/cache.bin", Cache_Binary_Target, Ignored_Statistics, null, Limits),
          "production fixture rewrites cache metadata after sidecar blocker is removed");
       Assert
         (Sitefetch.Crawler.Fetch_Website
@@ -2489,7 +2485,6 @@ package body Sitefetchlib_Production_HTTP_Tests is
       Assert
         (Parallel_Progress.Count (Sitefetch.Progress_Cache_Reused) = 0,
          "strict metadata version rejection does not report cache reuse");
-      Limits.Cache.Require_Metadata_Version := False;
       Delete_Tree_If_Present (Resume_Target);
       Limits := Sitefetch.Default_Fetch_Options;
       Limits.Cache.Mode := Sitefetch.Cache_Revalidate;
@@ -2679,10 +2674,9 @@ package body Sitefetchlib_Production_HTTP_Tests is
       Control.Stop;
    end Run_Test;
 
-
-
    procedure Add_Tests (Suite : AUnit.Test_Suites.Access_Test_Suite) is
+      type Test_Case_Access is access all AUnit.Simple_Test_Cases.Test_Case'Class;
    begin
-      Suite.Add_Test (new Production_HTTP_Fixture_Test);
+      Suite.Add_Test (Test_Case_Access'(new Production_HTTP_Fixture_Test));
    end Add_Tests;
 end Sitefetchlib_Production_HTTP_Tests;

@@ -22,3 +22,6 @@ project_tools = "*"
 
 [[pins]]
 project_tools = { path = "../../project_tools" }
+
+[build-profiles]
+"*" = "development"

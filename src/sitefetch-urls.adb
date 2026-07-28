@@ -25,7 +25,6 @@ package body Sitefetch.URLs is
       Entries : URL_Path_Maps.Map;
    end Local_Path_Cache;
 
-
    protected body Local_Path_Cache is
       procedure Lookup (URL : String; Found : out Boolean; Path : out Unbounded_String) is
       begin
@@ -129,7 +128,6 @@ package body Sitefetch.URLs is
      (URL  : String;
       Item : out Http_Client.URI.URI_Reference) return Boolean
    is
-      use type Http_Client.Errors.Result_Status;
    begin
       return Http_Client.URI.Parse
         ((if Is_HTTP_URL (URL) then URL else "http://" & URL), Item) = Http_Client.Errors.Ok;

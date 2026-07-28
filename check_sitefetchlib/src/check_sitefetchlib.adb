@@ -23,7 +23,7 @@ procedure Check_Sitefetchlib is
    --  was cancelled). regexp proves itself in its own CI. Scoped, this unit proves
    --  100% at --level=4 in ~12s. -j0 parallelises; --timeout caps each VC.
    Gnatprove_Check_Args : constant Argument_List :=
-     (1 => new String'("exec"),
+     [1 => new String'("exec"),
       2 => new String'("--"),
       3 => new String'("gnatprove"),
       4 => new String'("-P"),
@@ -32,13 +32,13 @@ procedure Check_Sitefetchlib is
       7 => new String'("sitefetch-domains.adb"),
       8 => new String'("--level=4"),
       9 => new String'("-j0"),
-      10 => new String'("--timeout=20"));
+      10 => new String'("--timeout=20")];
 
    GNAT_Version_Check_Args : constant Argument_List :=
-     (1 => new String'("exec"),
+     [1 => new String'("exec"),
       2 => new String'("--"),
       3 => new String'("gnatls"),
-      4 => new String'("--version"));
+      4 => new String'("--version")];
 
    function Root_Directory return String is
       Current : constant String := Ada.Directories.Current_Directory;
@@ -153,9 +153,9 @@ procedure Check_Sitefetchlib is
       Search      : Ada.Directories.Search_Type;
       Dir_Entry   : Ada.Directories.Directory_Entry_Type;
       Filter      : constant Ada.Directories.Filter_Type :=
-        (Ada.Directories.Ordinary_File => False,
+        [Ada.Directories.Ordinary_File => False,
          Ada.Directories.Directory     => True,
-         Ada.Directories.Special_File  => False);
+         Ada.Directories.Special_File  => False];
    begin
       Ada.Directories.Start_Search
         (Search    => Search,

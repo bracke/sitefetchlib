@@ -5,7 +5,6 @@ with Ada.Directories;
 with Ada.Streams.Stream_IO;
 with Ada.Strings.Fixed;
 with Ada.Strings.Hash;
-with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 with Interfaces;
 
@@ -48,10 +47,6 @@ package body Sitefetch.Engine is
    use Sitefetch.Engine.State;
    use Sitefetch.URLs;
 
-   use type Simple_Fetcher_Access;
-   use type Final_Fetcher_Access;
-   use type Direct_Downloader_Access;
-   use type Parallel_Fetcher_Access;
    use type Ada.Calendar.Time;
    use type Ada.Directories.File_Kind;
    use type Ada.Directories.File_Size;
@@ -107,9 +102,7 @@ package body Sitefetch.Engine is
          Durability);
    end Write_Document_With_Optional_Rewrite;
 
-
    function With_Reason (URL : String; Reason : String) return String;
-
 
    function Download_Staging_Path (Target_Path : String; Limits : Fetch_Options) return String is
    begin
@@ -140,7 +133,6 @@ package body Sitefetch.Engine is
       end if;
    end Usable_Cache_Metadata;
 
-
    function Safety_Skips_Download (Limits : Fetch_Options; URL : String) return Boolean is
    begin
       case Limits.Safety.Mode is
@@ -162,7 +154,6 @@ package body Sitefetch.Engine is
       end if;
    end Emit_Dangerous_Download_If_Needed;
 
-
    function Status_Reason (Status : Http_Client.Errors.Result_Status) return String is
    begin
       return Ada.Strings.Fixed.Trim
@@ -178,7 +169,6 @@ package body Sitefetch.Engine is
       end if;
    end With_Reason;
 
-
    function Byte_Limit_Reason (Max_Bytes : Natural) return String is
    begin
       return "byte limit exceeded: max " & Natural'Image (Max_Bytes) & " bytes";
@@ -188,7 +178,6 @@ package body Sitefetch.Engine is
    begin
       return Ada.Strings.Fixed.Trim (Natural'Image (Value), Ada.Strings.Left);
    end Natural_Image;
-
 
    function HTTP_Fetch_Final
      (Item           : Http_Client.Clients.Client;
@@ -207,7 +196,6 @@ package body Sitefetch.Engine is
       Progress       : Progress_Callback;
       Limits         : Fetch_Options) return Boolean
    is
-      use type Http_Client.Errors.Result_Status;
       use type Http_Client.Types.Status_Code;
 
       Result : Http_Client.Clients.Client_Result;
@@ -451,7 +439,6 @@ package body Sitefetch.Engine is
       Progress       : Progress_Callback;
       Limits         : Fetch_Options) return Boolean
    is
-      use type Http_Client.Errors.Result_Status;
       use type Http_Client.Types.Status_Code;
       use type Http_Client.Clients.Resume_Fallback_Action;
 
@@ -795,7 +782,6 @@ package body Sitefetch.Engine is
                   "HTTP_" & Natural_Image (Natural (Http_Client.Responses.Status_Code (Response_Info)))));
             if Limits.Crawl.Robots_Failure = Robots_Fail_Closed then
                Rules := Fail_Closed_Robots;
-            Rules.Source_URL := To_Unbounded_String (Robots_URL);
                Rules.Source_URL := To_Unbounded_String (Robots_URL);
             end if;
          end if;
@@ -1344,7 +1330,6 @@ package body Sitefetch.Engine is
       task type Worker;
 
       task body Worker is
-         use type Http_Client.Errors.Result_Status;
 
          Item           : Http_Client.Clients.Client;
          Status         : Http_Client.Errors.Result_Status;
@@ -1380,11 +1365,14 @@ package body Sitefetch.Engine is
                Depth => Work_Depth, Has_Depth => True);
 
                if Work_Type = Work_Download then
-                  if not Download_State_HTTP
-                    (State, Item, Target_Directory, To_String (Current_URL), Progress, Limits, Work_Depth)
-                  then
+                  --  Failure here is deliberately tolerated; the caller carries on.
+                  declare
+                     Ignored : constant Boolean := Download_State_HTTP
+                     (State, Item, Target_Directory, To_String (Current_URL), Progress, Limits, Work_Depth);
+                     pragma Unreferenced (Ignored);
+                  begin
                      null;
-                  end if;
+                  end;
                else
                   declare
                      Probe_URL      : Unbounded_String;
@@ -1443,8 +1431,10 @@ package body Sitefetch.Engine is
                               Redirect_Hops, To_String (Redirect_Status_Codes),
                               To_String (Redirect_Target_URLs),
                               To_String (Redirect_Locations));
-                           if not Write_State_Document
-                             (State,
+                           --  Failure here is deliberately tolerated; the caller carries on.
+                           declare
+                              Ignored : constant Boolean := Write_State_Document
+                              (State,
                               Target_Directory,
                               To_String (Content_Text),
                               To_String (Effective_URL),
@@ -1456,10 +1446,11 @@ package body Sitefetch.Engine is
                               True,
                               Robots,
                               Response_Info,
-                              Not_Modified)
-                           then
+                              Not_Modified);
+                              pragma Unreferenced (Ignored);
+                           begin
                               null;
-                           end if;
+                           end;
                         end if;
                      end if;
                   end;
@@ -1567,8 +1558,10 @@ package body Sitefetch.Engine is
                         Final_URL => To_String (Current_URL),
                         Local_Path => Target_Path);
                   else
-                     if not Move_State_Download
-                       (State,
+                     --  Failure here is deliberately tolerated; the caller carries on.
+                     declare
+                        Ignored : constant Boolean := Move_State_Download
+                        (State,
                         Target_Directory,
                         Download_Path,
                         To_String (Current_URL),
@@ -1578,10 +1571,11 @@ package body Sitefetch.Engine is
                         Http_Client.Responses.Default_Response,
                         Downloaded_Bytes,
                         Reserved_Bytes,
-                        Work_Depth)
-                     then
+                        Work_Depth);
+                        pragma Unreferenced (Ignored);
+                     begin
                         null;
-                     end if;
+                     end;
                   end if;
                end;
             else
@@ -1601,8 +1595,10 @@ package body Sitefetch.Engine is
                     (Effective_Final_URL (To_String (Current_URL), Final_URL_Text));
                   Mark_Redirected_URL (State, To_String (Current_URL), To_String (Effective_URL));
                   Emit_Redirected (Progress, To_String (Current_URL), To_String (Effective_URL), Work_Depth, True);
-                  if not Write_State_Document
-                    (State,
+                  --  Failure here is deliberately tolerated; the caller carries on.
+                  declare
+                     Ignored : constant Boolean := Write_State_Document
+                     (State,
                      Target_Directory,
                      To_String (Content_Text),
                      To_String (Effective_URL),
@@ -1613,10 +1609,11 @@ package body Sitefetch.Engine is
                      True,
                      True,
                      Ignore_Robots,
-                     Http_Client.Responses.Default_Response)
-                  then
+                     Http_Client.Responses.Default_Response);
+                     pragma Unreferenced (Ignored);
+                  begin
                      null;
-                  end if;
+                  end;
                end if;
             end if;
 
@@ -2097,7 +2094,6 @@ package body Sitefetch.Engine is
          return False;
       end if;
 
-
       Effective_Root := To_Unbounded_String (Effective_Final_URL (Root_URL, Final_URL_Text));
       Mark_Redirected_URL (State, Root_URL, To_String (Effective_Root));
       Emit_Redirected (Progress, Root_URL, To_String (Effective_Root), 0, True);
@@ -2469,7 +2465,7 @@ package body Sitefetch.Engine is
       end if;
 
       return Fetch_Website_With_Fetcher
-        (URL, Target_Directory, Simple_Fetcher_Access (Fetcher), Statistics, Progress);
+        (URL, Target_Directory, Fetcher, Statistics, Progress);
    end Fetch_Website_With_Simple_Injected_Fetcher;
 
    function Fetch_Website_With_Final_Injected_Download
@@ -2514,7 +2510,6 @@ package body Sitefetch.Engine is
       Progress         : Progress_Callback := null;
       Options          : Fetch_Options := Default_Fetch_Options) return Boolean
    is
-      use type Http_Client.Errors.Result_Status;
 
       Limits          : constant Fetch_Options := Options;
 
@@ -2618,36 +2613,36 @@ package body Sitefetch.Engine is
            Load_Robots (Item, To_String (Effective_Root), Limits, Progress);
          Effective_Limits : constant Fetch_Options := Apply_Robots_Delay (Limits, Robots);
       begin
-      if not Write_State_Document
-        (State,
-         Target_Directory,
-         To_String (Content_Text),
-         To_String (Effective_Root),
-         To_String (Effective_Root),
-         Progress,
-         Effective_Limits,
-         0,
-         Parse_Content,
-         Parse_Content,
-         Robots,
-         Response_Info,
-         Not_Modified)
-      then
-         Statistics := State.Snapshot;
-         return False;
-      end if;
-
-      if Parse_Content then
-         Enqueue_Robots_Sitemaps (State, To_String (Effective_Root), Robots, Effective_Limits, Progress);
-         Fetch_Parallel_HTTP
+         if not Write_State_Document
            (State,
-            To_String (Effective_Root),
             Target_Directory,
+            To_String (Content_Text),
+            To_String (Effective_Root),
+            To_String (Effective_Root),
             Progress,
             Effective_Limits,
-            Effective_Limits.Crawl.Workers,
-            Robots);
-      end if;
+            0,
+            Parse_Content,
+            Parse_Content,
+            Robots,
+            Response_Info,
+            Not_Modified)
+         then
+            Statistics := State.Snapshot;
+            return False;
+         end if;
+
+         if Parse_Content then
+            Enqueue_Robots_Sitemaps (State, To_String (Effective_Root), Robots, Effective_Limits, Progress);
+            Fetch_Parallel_HTTP
+              (State,
+               To_String (Effective_Root),
+               Target_Directory,
+               Progress,
+               Effective_Limits,
+               Effective_Limits.Crawl.Workers,
+               Robots);
+         end if;
       end;
 
       Statistics := State.Snapshot;

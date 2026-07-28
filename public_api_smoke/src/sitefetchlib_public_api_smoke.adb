@@ -23,9 +23,9 @@ procedure Sitefetchlib_Public_API_Smoke is
    Local_Path : constant String :=
      Sitefetch.URLs.Local_Path_For_URL ("https://example.com/assets/app.css?v=1");
 
-   Structured : Sitefetch.Structured_Progress_Callback :=
+   Structured : constant Sitefetch.Structured_Progress_Callback :=
      Sitefetchlib_Public_API_Smoke_Callbacks.Structured_Progress'Access;
-   Legacy     : Sitefetch.Progress_Callback := null;
+   Legacy : constant Sitefetch.Progress_Callback := null;
    Success    : Boolean := False;
 begin
    Options.Crawl.Max_Pages := 1;

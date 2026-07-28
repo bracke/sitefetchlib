@@ -2,7 +2,6 @@ with Ada.Containers.Indefinite_Hashed_Sets;
 with Ada.Directories;
 with Ada.Strings.Fixed;
 with Ada.Strings.Hash;
-with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
 with Http_Client.Clients;

@@ -32,3 +32,11 @@ regexp = { path = "../regexp" }
 
 [[pins]]
 zlib = { path = "../zlib" }
+
+# Pins are root-only in Alire: this root builds zlib (directly and via
+# httpclient), so it must pin zlib's own dependency cryptolib too.
+[[pins]]
+cryptolib = { path = "../cryptolib" }
+
+[build-profiles]
+"*" = "development"

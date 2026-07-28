@@ -40,7 +40,6 @@ private package Sitefetch.Engine.Cache is
       Sidecar_Time_Known : Boolean := False;
    end record;
 
-
    function Cache_Metadata_Path (Target_Path : String) return String;
 
    function Partial_Download_Path (Target_Path : String) return String;

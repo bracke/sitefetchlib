@@ -6,7 +6,6 @@ with Ada.Text_IO;
 
 with AUnit.Assertions;
 with AUnit.Simple_Test_Cases;
-with AUnit.Test_Suites;
 
 with Project_Tools.Files;
 
@@ -101,8 +100,6 @@ package body Sitefetchlib_Test_Suite is
    Last_Download_Path    : Unbounded_String := Null_Unbounded_String;
    External_Fetched      : Boolean := False;
    Special_Fetched       : Boolean := False;
-   Priority_Page_Fetched : Boolean := False;
-   Priority_Download_After_Page : Boolean := False;
 
    Download_Root_Document : constant String := "<a href=""/files/report.pdf"">report</a>";
    Download_Parallel_Document : constant String :=
@@ -318,8 +315,6 @@ package body Sitefetchlib_Test_Suite is
       Last_Written_Progress := Null_Unbounded_String;
       Last_Download_URL := Null_Unbounded_String;
       Last_Download_Path := Null_Unbounded_String;
-      Priority_Page_Fetched := False;
-      Priority_Download_After_Page := False;
    end Reset_Download_Fake;
 
    protected type Cache_Fixture_Control is
@@ -555,7 +550,6 @@ package body Sitefetchlib_Test_Suite is
          end if;
       end Handle;
    begin
-      GNAT.Sockets.Initialize;
       GNAT.Sockets.Create_Socket (Server);
       Address.Addr := GNAT.Sockets.Inet_Addr ("127.0.0.1");
       Address.Port := 0;
@@ -895,7 +889,6 @@ package body Sitefetchlib_Test_Suite is
          return True;
       elsif URL = "https://download.example/ok.html" then
          Document_Text := To_Unbounded_String (Download_Ok_Text);
-         Priority_Page_Fetched := True;
          return True;
       end if;
       Document_Text := Null_Unbounded_String;
@@ -942,9 +935,6 @@ package body Sitefetchlib_Test_Suite is
       if Current_Download_Mode in Download_Succeeds | Download_Byte_Limit
         and then Fetch_URL = "https://download.example/files/report.pdf"
       then
-         if Current_Download_Mode = Download_Byte_Limit then
-            Priority_Download_After_Page := Priority_Page_Fetched;
-         end if;
          Write_Test_File (Target_Path, Downloaded_Report_Text);
          Bytes_Written := Downloaded_Report_Text'Length;
          Final_URL := To_Unbounded_String ("https://download.example/assets/final-report.pdf");
@@ -1344,7 +1334,6 @@ package body Sitefetchlib_Test_Suite is
       Assert (Http_Client.Headers.Get (Custom_Config.Default_Headers, "User-Agent") = "sitefetchlib-test",
               "custom user-agent is installed");
    end Run_Test;
-
 
    overriding procedure Run_Test (Item : in out Fetch_Engine_Test) is
       pragma Unreferenced (Item);
@@ -2114,17 +2103,20 @@ package body Sitefetchlib_Test_Suite is
    end Run_Test;
 
    function All_Tests return AUnit.Test_Suites.Access_Test_Suite is
+      --  Add_Test takes an anonymous access parameter; naming the type keeps
+      --  these cases on the standard pool.
+      type Test_Case_Access is access all AUnit.Simple_Test_Cases.Test_Case'Class;
       Result : constant AUnit.Test_Suites.Access_Test_Suite := new AUnit.Test_Suites.Test_Suite;
    begin
       Sitefetchlib_Production_HTTP_Tests.Add_Tests (Result);
-      Result.Add_Test (new URL_Test);
-      Result.Add_Test (new Link_Extraction_Test);
-      Result.Add_Test (new Rewrite_Test);
-      Result.Add_Test (new Classification_Test);
-      Result.Add_Test (new Client_Config_Test);
-      Result.Add_Test (new Fetch_Engine_Test);
-      Result.Add_Test (new Parallel_Fetch_Test);
-      Result.Add_Test (new Direct_Download_Test);
+      Result.Add_Test (Test_Case_Access'(new URL_Test));
+      Result.Add_Test (Test_Case_Access'(new Link_Extraction_Test));
+      Result.Add_Test (Test_Case_Access'(new Rewrite_Test));
+      Result.Add_Test (Test_Case_Access'(new Classification_Test));
+      Result.Add_Test (Test_Case_Access'(new Client_Config_Test));
+      Result.Add_Test (Test_Case_Access'(new Fetch_Engine_Test));
+      Result.Add_Test (Test_Case_Access'(new Parallel_Fetch_Test));
+      Result.Add_Test (Test_Case_Access'(new Direct_Download_Test));
       return Result;
    end All_Tests;
 end Sitefetchlib_Test_Suite;

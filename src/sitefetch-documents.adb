@@ -3,7 +3,6 @@ with Ada.Containers.Indefinite_Hashed_Maps;
 with Ada.Containers.Indefinite_Hashed_Sets;
 with Ada.Strings.Fixed;
 with Ada.Strings.Hash;
-with Ada.Strings.Unbounded;
 
 with Regexp;
 
@@ -45,7 +44,6 @@ package body Sitefetch.Documents is
      Regexp.Compile ("\ssrcset\s*=\s*""[^""<]*""");
    Srcset_Single_Regexp : constant Regexp.Compile_Result :=
      Regexp.Compile ("\ssrcset\s*=\s*'[^'<]*'");
-
 
    function Hex_Value (Item : Character) return Natural is
    begin
@@ -335,7 +333,6 @@ package body Sitefetch.Documents is
          From := Found.Last + 1;
       end loop;
    end Extract_Srcset_With_Pattern;
-
 
    function Is_ASCII_Whitespace (Item : Character) return Boolean is
      (Item = ' ' or else Item = Character'Val (9)
