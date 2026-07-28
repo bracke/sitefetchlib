@@ -14,10 +14,31 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: sitefetchlib
-      - name: Check out sibling crates (transitive pin closure)
-        uses: bracke/project_tools/.github/actions/checkout-ada-siblings@main
+      - name: Check out httpclient sibling
+        uses: actions/checkout@v7
         with:
-          root: sitefetchlib
+          repository: ${{ github.repository_owner }}/httpclient
+          path: httpclient
+      - name: Check out regexp sibling
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/regexp
+          path: regexp
+      - name: Check out zlib sibling
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/zlib
+          path: zlib
+      - name: Check out cryptolib sibling
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/cryptolib
+          path: cryptolib
+      - name: Check out project_tools sibling
+        uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository_owner }}/project_tools
+          path: project_tools
       - name: Set up Alire
         uses: alire-project/setup-alire@v6
         with:
