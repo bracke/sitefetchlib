@@ -27,9 +27,9 @@ project Sitefetchlib_Tests is
    package Linker is
       case Sitefetchlib_Tests_Config.Alire_Host_OS is
          when "windows" =>
-            for Default_Switches ("Ada") use ("-lssl", "-lcrypto", "-lws2_32", "-lcrypt32");
+            for Default_Switches ("Ada") use ("-lws2_32", "-lcrypt32");
          when others =>
-            for Default_Switches ("Ada") use ("-lssl", "-lcrypto");
+            for Default_Switches ("Ada") use ();
       end case;
    end Linker;
 

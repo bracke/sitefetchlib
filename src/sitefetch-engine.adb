@@ -654,7 +654,13 @@ package body Sitefetch.Engine is
       end if;
 
       Failure_Reason := Null_Unbounded_String;
-      Bytes_Written := Result.Bytes_Written;
+      --  Sitefetch's public crawl accounting remains Natural-bounded.  The
+      --  HTTP client reports download counters in 64 bits, so retain the
+      --  existing saturating accounting behavior when an unlimited download
+      --  exceeds that public range.
+      Bytes_Written := Natural
+        (Interfaces.Unsigned_64'Min
+           (Result.Bytes_Written, Interfaces.Unsigned_64 (Natural'Last)));
       return True;
    end HTTP_Download_Final;
 
