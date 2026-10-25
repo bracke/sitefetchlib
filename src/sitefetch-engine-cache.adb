@@ -146,7 +146,7 @@ package body Sitefetch.Engine.Cache is
          return Http_Client.Crypto.Digest_File_SHA256_Hex (Path_Text);
       end if;
 
-      Ada.Streams.Stream_IO.Open (File, Ada.Streams.Stream_IO.In_File, Path_Text);
+      Ada.Streams.Stream_IO.Open (File, Ada.Streams.Stream_IO.In_File, Path_Text, Form => "shared=no");
       while not Ada.Streams.Stream_IO.End_Of_File (File) loop
          Ada.Streams.Stream_IO.Read (File, Buffer, Last);
          for Index_Value in Buffer'First .. Last loop
@@ -265,7 +265,7 @@ package body Sitefetch.Engine.Cache is
             null;
       end;
 
-      Ada.Text_IO.Open (File, Ada.Text_IO.In_File, Path_Text);
+      Ada.Text_IO.Open (File, Ada.Text_IO.In_File, Path_Text, Form => "shared=no");
       while not Ada.Text_IO.End_Of_File (File) loop
          declare
             Line : constant String := Ada.Text_IO.Get_Line (File);

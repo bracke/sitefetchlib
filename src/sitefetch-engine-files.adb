@@ -191,7 +191,7 @@ package body Sitefetch.Engine.Files is
       Last       : Natural;
    begin
       Content_Text := Null_Unbounded_String;
-      Ada.Text_IO.Open (Input_File, Ada.Text_IO.In_File, Path_Text);
+      Ada.Text_IO.Open (Input_File, Ada.Text_IO.In_File, Path_Text, Form => "shared=no");
       while not Ada.Text_IO.End_Of_File (Input_File) loop
          Ada.Text_IO.Get_Line (Input_File, Buffer, Last);
          if Last > 0 then
